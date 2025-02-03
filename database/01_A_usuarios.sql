@@ -1,0 +1,1 @@
+ALTER TABLE `ws_usuario` ADD `id_sector` INT NOT NULL DEFAULT '0' AFTER `id_aplicativo`, ADD `id_zona` INT NULL AFTER `id_sector`, ADD `id_seccion` INT NULL AFTER `id_zona`;

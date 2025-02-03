@@ -1,0 +1,15 @@
+{
+    "name": "jf/dinojumpers",
+    "authors": [
+        {
+            "name": "JF!",
+            "email": "fhohs@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "firebase/php-jwt": "@dev",
+        "slim/slim": "3.*",
+        "phpoffice/phpspreadsheet": "^1.25"
+    }
+}
