@@ -8,7 +8,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
 
-$app->get('/reporte/listReportes',function(Request $request, Response $response){
+$app->post('/reporte/listReportes',function(Request $request, Response $response){
 
     $id_current_user = $request->getParam('id_current_user');
 	$id_rol  = $request->getParam('id_rol');
