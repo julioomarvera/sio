@@ -45,16 +45,19 @@ foreach ($datos as $key => $value) {
 	//Reportes
 	elseif ($value == $api_complemento . "/apis/reporte/listReportes") {
 		require_once('backend/reporte/listReportes.php');
-	}
-	elseif ($value == $api_complemento . "/apis/reporte/insertupdate") {
+	}elseif ($value == $api_complemento . "/apis/reporte/insertupdate") {
 		require_once('backend/reporte/insertupdate.php');
 	}elseif ($value == $api_complemento . "/apis/reporte/getReporteById") {
 		require_once('backend/reporte/listReporteById.php');
 	}
 
-	else if($value == $api_complemento . "/apis/reporte/reportById") {
-		require_once('backend/reporte/reportById.php');
+	//subir foto
+	elseif ($value == $api_complemento . "/apis/reporte/listFoto") {
+		require_once('backend/reporte/listFoto.php');
 	}
 
+	
+
+}
 
 $app->run();
