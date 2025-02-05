@@ -8,14 +8,9 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
 
-$app->post('/reporte/listReportes',function(Request $request, Response $response){
+$app->post('/reporte/getReporteById',function(Request $request, Response $response){
 
-    $id_current_user = $request->getParam('id_current_user');
-	$id_rol  = $request->getParam('id_rol');
-	$id_sector  = $request->getParam('id_sector');
-	$id_zona  = $request->getParam('id_zona');
-	$id_seccion  = $request->getParam('id_seccion');
-
+    $id_reporte = $request->getParam('id_reporte');
 	$cFn 	 = new cFunction();
 	$cAccion = new cReports();
 	
@@ -38,26 +33,11 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
         
         JWT::decode($token, _SECRET_JWT_, array('HS256')); //valida jwt, si no es válido tira una exepción
 		
-        if($id_current_user == ""){
+        if($id_reporte == ""){
 			throw new Exception("No se especificó el usuario");
 		}
         
-        if($id_rol == ""){
-			throw new Exception("No se especificó el perfil del usuario");
-		}
-
-        if($id_sector == "" || $id_zona == "" || $id_seccion == ""
-         || !is_numeric($id_sector) || !is_numeric($id_zona) || !is_numeric($id_seccion)){  
-            throw new Exception("No se especificó correctamente el sector, zona o sección");
-        }
-
-		$lista = $cAccion->getAllReg(
-            $id_current_user,
-            $id_rol,
-            $id_sector,
-            $id_zona,
-            $id_seccion
-        );
+		$lista = $cAccion->getReporteById($id_reporte);
 		
 		$done 	   = false;
 		$rows	   = array();

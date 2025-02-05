@@ -711,6 +711,7 @@ class cUsers extends BD
                       and u.clave = ?
                     LIMIT 1";
 
+                  
         $result = $this->conn->prepare($query);
         $result->execute(
             array(

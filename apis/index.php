@@ -47,7 +47,17 @@ foreach ($datos as $key => $value) {
 		require_once('backend/reporte/listReportes.php');
 	}elseif ($value == $api_complemento . "/apis/reporte/insertupdate") {
 		require_once('backend/reporte/insertupdate.php');
+	}elseif ($value == $api_complemento . "/apis/reporte/getReporteById") {
+		require_once('backend/reporte/listReporteById.php');
 	}
+
+	//subir foto
+	elseif ($value == $api_complemento . "/apis/reporte/listFoto") {
+		require_once('backend/reporte/listFoto.php');
+	}
+
+	
+
 }
 
 $app->run();

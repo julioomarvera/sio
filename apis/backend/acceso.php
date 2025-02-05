@@ -62,6 +62,10 @@ $app->post('/acceso',function(Request $request, Response $response){
 		$id_zona	= intval($data->id_zona);
 		$id_seccion	= intval($data->id_seccion);
 
+		if($id_sector == 0){
+
+		}
+
 		$issuedat_claim = time(); // issued at
 		$expire_claim = $issuedat_claim + 37000; // expire time in seconds
 		
@@ -77,7 +81,7 @@ $app->post('/acceso',function(Request $request, Response $response){
 
 		$token  = JWT::encode($token, _SECRET_JWT_);
 		
-		$done 	 = true;
+		$done 	 = 1;
 		$msg 	 = "Usuario con datos";
 
 		//Opciones de usuario
