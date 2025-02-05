@@ -14,7 +14,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
 
-// $app->post('/reporte/listFoto',function(Request $request, Response $response){
+$app->post('/reporte/listFoto',function(Request $request, Response $response){
      $dir_fc = "../";
 //     var_dump($request);
 //     echo die($request);
@@ -45,13 +45,15 @@ use \Firebase\JWT\JWT;
             //     "message" => "Imagen subida con éxito",
             //     "path" => $filePath
             // ]);
-            $resp->path = $filePath;
-            echo json_encode([$filePath]); 
+             $resp->path = $filePath;
+            // echo json_encode([$filePath]); 
+
+            return $response->withJson($resp,200);
         } else {
             echo json_encode(["success" => false, "message" => "Error al subir la imagen"]);
         }
     } else {
         echo json_encode(["success" => false, "message" => "No se recibió ninguna imagen"]);
     }
-// });
+});
 ?>
