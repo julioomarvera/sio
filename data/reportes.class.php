@@ -566,23 +566,22 @@ class cReports extends BD{
                                      AND d.estatus_rechazado = 0 )";
             }
         }
-        
+
         $query = "SELECT r.id_reporte, 
                          r.id_usuario_captura, 
                          r.id_colonia, 
+                         m.colonia,
                          r.id_calle,
+                         l.calle,
                          r.id_origen,
+                         o.abreviatura,
                          r.id_cuidadano_solicita,
                          r.id_aplicativo,
-                         r.no_reporte, 
+                         a.descripcion as aplicativo,
                          r.descripcion, 
                          DATE_FORMAT(r.fecha_captura, '%d/%m/%Y') as fecha_captura, 
-                         DATE_FORMAT(r.fecha_situacion, '%d/%m/%Y') as fecha_situacion,
-                         DATE_FORMAT(r.fecha_asignacion, '%d/%m/%Y') as fecha_asignacion,
                          DATE_FORMAT(r.fecha_estatus, '%d/%m/%Y') as fecha_estatus,
-                         DATE_FORMAT(r.fecha_termino, '%d/%m/%Y') as fecha_termino,
                          DATE_FORMAT(r.fecha_limite, '%d/%m/%Y') as fecha_limite,
-                         DATE_FORMAT(r.fecha_limite, '%Y-%m-%d') as fecha_limite_calculo,
                          r.telefono_fijo, 
                          r.telefono_cel,
                          r.numero_exterior, 
@@ -590,27 +589,19 @@ class cReports extends BD{
                          r.cp,
                          r.referencias, 
                          r.avance,
-                         r.oficio_respuesta, 
                          r.concluido,
-                         r.activo,
-                         e.estatus, 
-                         e.class, 
-                         e.finaliza,
-                         o.abreviatura,
                          r.id_estatus,
+                         e.estatus, 
                          r.copaci,
                          m.sectorint,
                          r.notificacion_presidencia,
-                         a.img,
-                         a.descripcion,
-                         r.tipo_dia,
-                         r.no_dias,
                          r.activo
                     FROM tbl_reporte  as r
                LEFT JOIN cat_estatus as e on r.id_estatus = e.id_estatus
                LEFT JOIN cat_origen as o on r.id_origen = o.id_origen
                LEFT JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
                LEFT JOIN cat_aplicativo as a on r.id_aplicativo = a.id_aplicativo
+               LEFT JOIN cat_calles as l on l.id_calle = r.id_calle
                          $joinCondition
                    WHERE 1 = 1 
                    and r.id_estatus in (1, 2, 7)
@@ -619,6 +610,59 @@ class cReports extends BD{
                    $condition_b
                    $condition_fecha
                     ";
+        
+        // $query = "SELECT r.id_reporte, 
+        //                  r.id_usuario_captura, 
+        //                  r.id_colonia, 
+        //                  r.id_calle,
+        //                  r.id_origen,
+        //                  r.id_cuidadano_solicita,
+        //                  r.id_aplicativo,
+        //                  r.no_reporte, 
+        //                  r.descripcion, 
+        //                  DATE_FORMAT(r.fecha_captura, '%d/%m/%Y') as fecha_captura, 
+        //                  DATE_FORMAT(r.fecha_situacion, '%d/%m/%Y') as fecha_situacion,
+        //                  DATE_FORMAT(r.fecha_asignacion, '%d/%m/%Y') as fecha_asignacion,
+        //                  DATE_FORMAT(r.fecha_estatus, '%d/%m/%Y') as fecha_estatus,
+        //                  DATE_FORMAT(r.fecha_termino, '%d/%m/%Y') as fecha_termino,
+        //                  DATE_FORMAT(r.fecha_limite, '%d/%m/%Y') as fecha_limite,
+        //                  DATE_FORMAT(r.fecha_limite, '%Y-%m-%d') as fecha_limite_calculo,
+        //                  r.telefono_fijo, 
+        //                  r.telefono_cel,
+        //                  r.numero_exterior, 
+        //                  r.numero_interior, 
+        //                  r.cp,
+        //                  r.referencias, 
+        //                  r.avance,
+        //                  r.oficio_respuesta, 
+        //                  r.concluido,
+        //                  r.activo,
+        //                  e.estatus, 
+        //                  e.class, 
+        //                  e.finaliza,
+        //                  o.abreviatura,
+        //                  r.id_estatus,
+        //                  r.copaci,
+        //                  m.sectorint,
+        //                  r.notificacion_presidencia,
+        //                  a.img,
+        //                  a.descripcion,
+        //                  r.tipo_dia,
+        //                  r.no_dias,
+        //                  r.activo
+        //             FROM tbl_reporte  as r
+        //        LEFT JOIN cat_estatus as e on r.id_estatus = e.id_estatus
+        //        LEFT JOIN cat_origen as o on r.id_origen = o.id_origen
+        //        LEFT JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
+        //        LEFT JOIN cat_aplicativo as a on r.id_aplicativo = a.id_aplicativo
+        //                  $joinCondition
+        //            WHERE 1 = 1 
+        //            and r.id_estatus in (1, 2, 7)
+        //            $conditionst 
+        //            $condition
+        //            $condition_b
+        //            $condition_fecha
+        //             ";
             // die($query);
 
         $result = $this->conn->prepare($query);
@@ -3055,7 +3099,8 @@ class cReports extends BD{
                   INNER JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
                        WHERE r.id_reporte = $id_rpt
                        LIMIT 1";
-                    //    die($query);
+                    // die($query);
+
             $result = $this->conn->prepare($query);
             $result->execute();
             return $result;
@@ -3665,6 +3710,81 @@ class cReports extends BD{
                                                WHERE m.es_tramite = 0)
                         $condition";
                 // die($query);
+
+            $result = $this->conn->prepare($query);
+            $result->execute();
+            return $result;
+        }catch(\PDOException $e){
+            return "Error: ".$e->getMessage();
+        }
+    }
+
+
+    public function getReport( $id ){
+        try{
+            $query = "SELECT r.id_reporte,
+                             r.id_colonia,
+                             c.colonia,
+                             r.id_calle,
+                             a.calle,
+                             r.id_estatus,
+                             e.estatus,
+                             r.id_origen,
+                             o.origen,
+                             r.id_cuidadano_solicita,
+                             CONCAT_WS(' ', d.nombre, d.apepat, d.apemat) as ciudadano,
+                             r.id_entre_calle,
+                             t.calle as entre_calle,
+                             r.id_y_calle,
+                             y.calle as y_calle,
+                             r.descripcion,
+                             DATE_FORMAT(r.fecha_captura, '%d-%m-%Y') as fecha_captura,
+                             r.telefono_fijo,
+                             r.telefono_cel,
+                             r.cp,
+                             r.id_usuario_captura,
+                             CONCAT_WS(' ', w.nombre, w.apepa, w.apema) as nombre_usuario,
+                             CASE
+                                WHEN l.id_remty IS NOT NULL THEN s.nombre
+                                WHEN l.id_peticion IS NOT NULL THEN p.nombre
+                                ELSE 'Otro'
+                             END AS tramite
+                        FROM tbl_reporte as r
+                  INNER JOIN tbl_reporte_dtl as l on r.id_reporte = l.id_reporte
+                   LEFT JOIN cat_comunidad as c on c.id_comunidad = r.id_colonia       AND c.activo = 1    
+                   LEFT JOIN cat_calles    as a on a.id_calle     = r.id_calle         AND a.activo = 1
+                   LEFT JOIN cat_calles    as t on t.id_calle     = r.id_entre_calle   AND t.activo = 1
+                   LEFT JOIN cat_calles    as y on y.id_calle     = r.id_y_calle       AND y.activo = 1
+                   LEFT JOIN cat_estatus   as e on e.id_estatus   = r.id_estatus       AND e.activo = 1    
+                   LEFT JOIN cat_ciudadano as d on d.id_ciudadano = r.id_cuidadano_solicita AND d.activo = 1    
+                   LEFT JOIN cat_origen    as o on o.id_origen    = r.id_origen         AND o.activo = 1
+                   LEFT JOIN ws_usuario    as w on w.id_usuario   = r.id_usuario_captura AND w.activo = 1
+                   LEFT JOIN cat_remtys    as s on l.id_remty     = s.id_remtys AND s.activo = 1
+                   LEFT JOIN cat_peticiones as p on l.id_peticion = p.id_peticion AND p.activo = 1
+                       WHERE r.id_reporte = $id ";
+                // die($query);
+
+            $result = $this->conn->prepare($query);
+            $result->execute();
+            return $result;
+
+        }catch(\PDOException $e){
+            return "Error: ".$e->getMessage();
+        }
+    }
+
+
+    public function getFollowById( $id_rpt ){
+        try{
+            $query = "SELECT a.tipo_accion,
+                             t.observaciones,
+                             DATE_FORMAT(t.fecha_seguimiento, '%d-%m-%Y %r') as fecha_seguimiento
+                        FROM tbl_reporte_historia t
+                   LEFT JOIN cat_acciones as a on t.id_accion = a.id_accion
+                       WHERE t.id_reporte = $id_rpt 
+                    ORDER BY fecha_seguimiento DESC
+                       LIMIT 1";
+                    // die($query);
 
             $result = $this->conn->prepare($query);
             $result->execute();
