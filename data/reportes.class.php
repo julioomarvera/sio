@@ -3819,9 +3819,88 @@ class cReports extends BD{
         }
     }
 
+
+    public function insertSeguimiento( $data ){
+        $correcto= 1;
+
+        $exec = $this->conn->conexion();
+        try {
+            $queryMP = "INSERT INTO tbl_reporte_historia(
+                            id_estatus,
+                            id_usuario_captura,
+                            id_accion,
+                            fecha_captura,
+                            reporta_ciudadano,
+                            avance,
+                            seguimiento,
+                            observaciones,
+                            llamada_reporte,
+                            activo,
+                            id_reporte
+                            )
+                             VALUES (
+                            1,
+                            ?,
+                            7,
+                            ?,
+                            0,
+                            0,
+                            1,
+                            ?,
+                            0,
+                            1,
+                            ?)";
+
+            $result = $this->conn->prepare($queryMP);
+            $exec->beginTransaction();
+
+            $result->execute($data);
+
+            if ($correcto == 1){
+                $correcto= $exec->lastInsertId();
+            }
+
+            $exec->commit();
+            return $correcto;
+        }
+        catch(\PDOException $e)
+        {
+            $exec->rollBack();
+            return "Error!: " . $e->getMessage();
+        }
+    }
+
+
+    public function updateRegSeguimiento( $data ){
+        $correcto = 1;
+        $exec       = $this->conn->conexion();
+
+        try{
+            $update = "UPDATE tbl_reporte_historia
+                          SET id_usuario_modifica = ?,
+                            fecha_modificacion = ?,
+                            observaciones = ?
+                        WHERE id_reporte_historia = ?";
+
+            $result = $this->conn->prepare($update);
+            $exec->beginTransaction();
+            $result->execute($data);
+            $exec->commit();
+
+        }catch(\PDOException $e){
+            $exec->rollBack();
+            $correcto = "Error! : ".$e->getMessage();
+        }
+        return $correcto;
+    }
+
+    
+
     public function closeOut(){
         $this->conn = null;
     }
+
+
 
 }
 
