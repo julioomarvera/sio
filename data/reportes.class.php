@@ -3748,7 +3748,15 @@ class cReports extends BD{
                                 ELSE 'Otro'
                              END AS tramite,
                              latitud_reporte,
-                             longitud_reporte
+                             longitud_reporte,
+                             h.id_reporte_historia as id_seguimiento,
+                             n.tipo_accion,
+                             h.observaciones,
+                             DATE_FORMAT(h.fecha_seguimiento, '%d-%m-%Y %r') as fecha_seguimiento,
+                             CONCAT(b.route, md5(b.id_documento),'.',b.ext) as file,
+                             b.original_name,
+                             h.id_usuario_captura,
+                             CONCAT_WS(' ', w.nombre, w.apepa, w.apema) as nombre_usuario
                         FROM tbl_reporte as r
                   INNER JOIN tbl_reporte_dtl as l on r.id_reporte = l.id_reporte
                    LEFT JOIN cat_comunidad as c on c.id_comunidad = r.id_colonia       AND c.activo = 1    
@@ -3760,7 +3768,13 @@ class cReports extends BD{
                    LEFT JOIN cat_origen    as o on o.id_origen    = r.id_origen         AND o.activo = 1
                    LEFT JOIN cat_remtys    as s on l.id_remty     = s.id_remtys AND s.activo = 1
                    LEFT JOIN cat_peticiones as p on l.id_peticion = p.id_peticion AND p.activo = 1
-                       WHERE r.id_reporte = $id ";
+                   LEFT JOIN tbl_reporte_historia as h on r.id_reporte = h.id_reporte
+                   LEFT JOIN tbl_reporte_documento as b on b.id_historia_reporte = h.id_reporte_historia
+                   LEFT JOIN cat_acciones as n on h.id_accion  = n.id_accion AND n.activo = 1
+                   LEFT JOIN ws_usuario   as w on w.id_usuario = h.id_usuario_captura AND w.activo = 1
+                       WHERE r.id_reporte = $id 
+                    ORDER BY h.fecha_seguimiento DESC
+                       LIMIT 1";
                 // die($query);
 
             $result = $this->conn->prepare($query);

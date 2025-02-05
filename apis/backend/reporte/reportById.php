@@ -49,13 +49,14 @@ $app->post('/reporte/reportById',function(Request $request, Response $response){
         if($count > 0){
             while($rsRow = $reporte->fetch(PDO::FETCH_OBJ)){
                 $row = $rsRow;
+                
+                // $history =  $cAccion->getFollowById( $id_reporte );
+                // while($rfRow = $history->fetch(PDO::FETCH_OBJ)){      
+                //        $follow = $rfRow;
+                //     // $row[] = $rfRow;
+                //     // $row->$follow;
+                // }    
 
-                $follow = array();
-                $history =  $cAccion->getFollowById( $id_reporte );
-                while($rfRow = $history->fetch(PDO::FETCH_OBJ)){
-                    $follow[] = $rfRow;
-                }    
-                $row->seguimiento = $follow;
             }
 
             $done = true;	
