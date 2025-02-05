@@ -48,10 +48,13 @@ foreach ($datos as $key => $value) {
 	}
 	elseif ($value == $api_complemento . "/apis/reporte/insertupdate") {
 		require_once('backend/reporte/insertupdate.php');
+	}elseif ($value == $api_complemento . "/apis/reporte/getReporteById") {
+		require_once('backend/reporte/listReporteById.php');
 	}
+
 	else if($value == $api_complemento . "/apis/reporte/reportById") {
 		require_once('backend/reporte/reportById.php');
 	}
-}
+
 
 $app->run();
