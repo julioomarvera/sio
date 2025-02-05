@@ -571,9 +571,7 @@ class cReports extends BD{
                          r.id_usuario_captura, 
                          r.id_colonia, 
                          m.colonia,
-                         r.id_calle,
                          l.calle,
-                         r.id_origen,
                          o.abreviatura,
                          r.id_cuidadano_solicita,
                          r.id_aplicativo,
@@ -590,7 +588,6 @@ class cReports extends BD{
                          r.referencias, 
                          r.avance,
                          r.concluido,
-                         r.id_estatus,
                          e.estatus, 
                          r.copaci,
                          m.sectorint,
@@ -602,6 +599,7 @@ class cReports extends BD{
                LEFT JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
                LEFT JOIN cat_aplicativo as a on r.id_aplicativo = a.id_aplicativo
                LEFT JOIN cat_calles as l on l.id_calle = r.id_calle
+               LEFT JOIN cat_sectores as l on l.id_calle = r.id_calle
                          $joinCondition
                    WHERE 1 = 1 
                    and r.id_estatus in (1, 2, 7)
@@ -611,64 +609,60 @@ class cReports extends BD{
                    $condition_fecha
                     ";
         
-        // $query = "SELECT r.id_reporte, 
-        //                  r.id_usuario_captura, 
-        //                  r.id_colonia, 
-        //                  r.id_calle,
-        //                  r.id_origen,
-        //                  r.id_cuidadano_solicita,
-        //                  r.id_aplicativo,
-        //                  r.no_reporte, 
-        //                  r.descripcion, 
-        //                  DATE_FORMAT(r.fecha_captura, '%d/%m/%Y') as fecha_captura, 
-        //                  DATE_FORMAT(r.fecha_situacion, '%d/%m/%Y') as fecha_situacion,
-        //                  DATE_FORMAT(r.fecha_asignacion, '%d/%m/%Y') as fecha_asignacion,
-        //                  DATE_FORMAT(r.fecha_estatus, '%d/%m/%Y') as fecha_estatus,
-        //                  DATE_FORMAT(r.fecha_termino, '%d/%m/%Y') as fecha_termino,
-        //                  DATE_FORMAT(r.fecha_limite, '%d/%m/%Y') as fecha_limite,
-        //                  DATE_FORMAT(r.fecha_limite, '%Y-%m-%d') as fecha_limite_calculo,
-        //                  r.telefono_fijo, 
-        //                  r.telefono_cel,
-        //                  r.numero_exterior, 
-        //                  r.numero_interior, 
-        //                  r.cp,
-        //                  r.referencias, 
-        //                  r.avance,
-        //                  r.oficio_respuesta, 
-        //                  r.concluido,
-        //                  r.activo,
-        //                  e.estatus, 
-        //                  e.class, 
-        //                  e.finaliza,
-        //                  o.abreviatura,
-        //                  r.id_estatus,
-        //                  r.copaci,
-        //                  m.sectorint,
-        //                  r.notificacion_presidencia,
-        //                  a.img,
-        //                  a.descripcion,
-        //                  r.tipo_dia,
-        //                  r.no_dias,
-        //                  r.activo
-        //             FROM tbl_reporte  as r
-        //        LEFT JOIN cat_estatus as e on r.id_estatus = e.id_estatus
-        //        LEFT JOIN cat_origen as o on r.id_origen = o.id_origen
-        //        LEFT JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
-        //        LEFT JOIN cat_aplicativo as a on r.id_aplicativo = a.id_aplicativo
-        //                  $joinCondition
-        //            WHERE 1 = 1 
-        //            and r.id_estatus in (1, 2, 7)
-        //            $conditionst 
-        //            $condition
-        //            $condition_b
-        //            $condition_fecha
-        //             ";
-            // die($query);
-
         $result = $this->conn->prepare($query);
         $result->execute();
         return $result;
     } 
+
+    public function insertSeguimiento( $data ){
+        $correcto= 1;
+        
+        $exec = $this->conn->conexion();
+        try {
+            $queryMP = "INSERT INTO tbl_reporte_historia(
+                            id_estatus,
+                            id_usuario_captura,
+                            id_accion,
+                            fecha_captura,
+                            reporta_ciudadano,
+                            avance,
+                            seguimiento,
+                            observaciones,
+                            llamada_reporte,
+                            activo,
+                            id_reporte
+                            )
+                             VALUES (
+                            1,
+                            ?,
+                            7,
+                            ?,
+                            0,
+                            0,
+                            1,
+                            ?,
+                            0,
+                            1,
+                            ?)";
+
+            $result = $this->conn->prepare($queryMP);
+            $exec->beginTransaction();
+
+            $result->execute($data);
+
+            if ($correcto == 1){
+                $correcto= $exec->lastInsertId();
+            }
+
+            $exec->commit();
+            return $correcto;
+        }
+        catch(\PDOException $e)
+        {
+            $exec->rollBack();
+            return "Error!: " . $e->getMessage();
+        }
+    }
 
 
     public function origenByUser($usuario){
@@ -3136,6 +3130,29 @@ class cReports extends BD{
                               latitud_reporte          = ?,                  
                               longitud_reporte         = ?           
                         WHERE id_reporte               = ? ";
+
+            $result = $this->conn->prepare($update);
+            $exec->beginTransaction();
+            $result->execute($data);
+            $exec->commit();
+
+        }catch(\PDOException $e){
+            $exec->rollBack();
+            $correcto = "Error! : ".$e->getMessage();
+        }
+        return $correcto;
+    }
+    
+    public function updateRegSeguimiento( $data ){
+        $correcto = 1;
+        $exec       = $this->conn->conexion();
+        
+        try{
+            $update = "UPDATE tbl_reporte_historia
+                          SET id_usuario_modifica = ?,
+                            fecha_modificacion = ?,
+                            observaciones = ?
+                        WHERE id_reporte_historia = ?";
 
             $result = $this->conn->prepare($update);
             $exec->beginTransaction();
