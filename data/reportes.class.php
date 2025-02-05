@@ -3664,8 +3664,14 @@ class cReports extends BD{
                              r.telefono_cel,
                              r.cp,
                              r.id_usuario_captura,
-                             CONCAT_WS(' ', w.nombre, w.apepa, w.apema) as nombre_usuario
+                             CONCAT_WS(' ', w.nombre, w.apepa, w.apema) as nombre_usuario,
+                             CASE
+                                WHEN l.id_remty IS NOT NULL THEN s.nombre
+                                WHEN l.id_peticion IS NOT NULL THEN p.nombre
+                                ELSE 'Otro'
+                             END AS tramite
                         FROM tbl_reporte as r
+                  INNER JOIN tbl_reporte_dtl as l on r.id_reporte = l.id_reporte
                    LEFT JOIN cat_comunidad as c on c.id_comunidad = r.id_colonia       AND c.activo = 1    
                    LEFT JOIN cat_calles    as a on a.id_calle     = r.id_calle         AND a.activo = 1
                    LEFT JOIN cat_calles    as t on t.id_calle     = r.id_entre_calle   AND t.activo = 1
@@ -3674,6 +3680,8 @@ class cReports extends BD{
                    LEFT JOIN cat_ciudadano as d on d.id_ciudadano = r.id_cuidadano_solicita AND d.activo = 1    
                    LEFT JOIN cat_origen    as o on o.id_origen    = r.id_origen         AND o.activo = 1
                    LEFT JOIN ws_usuario    as w on w.id_usuario   = r.id_usuario_captura AND w.activo = 1
+                   LEFT JOIN cat_remtys    as s on l.id_remty     = s.id_remtys AND s.activo = 1
+                   LEFT JOIN cat_peticiones as p on l.id_peticion = p.id_peticion AND p.activo = 1
                        WHERE r.id_reporte = $id ";
                 // die($query);
 
@@ -3689,17 +3697,19 @@ class cReports extends BD{
 
     public function getFollowById( $id_rpt ){
         try{
-            $query = "SELECT CASE
-                                WHEN t.id_remty IS NOT NULL THEN r.descripcion
-                                WHEN t.id_peticion IS NOT NULL THEN p.descripcion
-                                ELSE 'Otro'
-                             END Tramite
-                        FROM tbl_reporte_dtl t
-                   LEFT JOIN cat_remtys as r on r.id_remtys = t.id_remty AND r.activo = 1
-                   LEFT JOIN cat_peticiones as p on r.id_peticion = p.id_peticion AND p.activo = 1
-                       WHERE id_reporte = $id_rpt ";
+            $query = "SELECT a.tipo_accion,
+                             t.observaciones,
+                             DATE_FORMAT(t.fecha_seguimiento, '%d-%m-%Y %r') as fecha_seguimiento
+                        FROM tbl_reporte_historia t
+                   LEFT JOIN cat_acciones as a on t.id_accion = a.id_accion
+                       WHERE t.id_reporte = $id_rpt 
+                    ORDER BY fecha_seguimiento DESC
+                       LIMIT 1";
                     // die($query);
 
+            $result = $this->conn->prepare($query);
+            $result->execute();
+            return $result;
         }catch(\PDOException $e){
             return "Error: ".$e->getMessage();
         }

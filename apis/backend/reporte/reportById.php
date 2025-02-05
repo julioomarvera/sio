@@ -44,7 +44,6 @@ $app->post('/reporte/reportById',function(Request $request, Response $response){
 
         $done   = false;
         $row    = "";
-        $follow = array();
         $msg    = "noValido";
         $count  = 0;
 
@@ -54,7 +53,12 @@ $app->post('/reporte/reportById',function(Request $request, Response $response){
             while($rsRow = $reporte->fetch(PDO::FETCH_OBJ)){
                 $row = $rsRow;
 
-                $follow =  $cAccion->getFollowById( $id_reporte );
+                $follow = array();
+                $history =  $cAccion->getFollowById( $id_reporte );
+                while($rfRow = $history->fetch(PDO::FETCH_OBJ)){
+                    $follow[] = $rfRow;
+                }    
+                $row->seguimiento = $follow;
             }
 
             $done = true;	
