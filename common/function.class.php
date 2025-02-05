@@ -273,7 +273,7 @@ class cFunction
                 $curl = curl_init();
 
                 curl_setopt_array($curl, array(
-                    CURLOPT_URL => apis_dir.'dependencias/direccion.php',
+                    CURLOPT_URL => 'http://192.1.1.37/dependencias/direccion.php',
                     CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_TIMEOUT => 30,
                     CURLOPT_SSL_VERIFYHOST => '0',

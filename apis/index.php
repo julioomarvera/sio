@@ -50,6 +50,12 @@ foreach ($datos as $key => $value) {
 	}elseif ($value == $api_complemento . "/apis/reporte/getReporteById") {
 		require_once('backend/reporte/listReporteById.php');
 	}
+	elseif ($value == $api_complemento . "/apis/reporte/reportById") {
+		require_once('backend/reporte/reportById.php');
+	}
+	elseif ($value == $api_complemento . "/apis/reporte/mapReportes"){
+		require_once('backend/reporte/mapReportes.php');
+	}
 
 	//subir foto
 	elseif ($value == $api_complemento . "/apis/reporte/listFoto") {

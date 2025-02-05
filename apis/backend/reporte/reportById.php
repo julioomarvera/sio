@@ -7,7 +7,6 @@ require_once $dir_fc."common/function.class.php";
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
-use PHPMailer\PHPMailer\Exception;
 
 $app->post('/reporte/reportById',function(Request $request, Response $response){
 
@@ -22,8 +21,6 @@ $app->post('/reporte/reportById',function(Request $request, Response $response){
         public $done;
         public $msg;
         public $row;
-        public $count;
-        public $follow;
     }
 
     try{
@@ -70,7 +67,6 @@ $app->post('/reporte/reportById',function(Request $request, Response $response){
 		$resp->done 	= $done;
 		$resp->msg 		= $msg;
 		$resp->row		= $row;
-		$resp->count	= $count;
 
 		return $response->withJson($resp,200);
 		
