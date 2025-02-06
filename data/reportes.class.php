@@ -568,43 +568,23 @@ class cReports extends BD{
         }
 
         $query = "SELECT r.id_reporte, 
-                         r.id_usuario_captura, 
-                         r.id_colonia, 
                          m.colonia,
-                         r.id_calle,
                          l.calle,
-                         r.id_origen,
-                         o.abreviatura,
-                         r.id_cuidadano_solicita,
-                         r.id_aplicativo,
-                         a.descripcion as aplicativo,
                          r.descripcion, 
                          DATE_FORMAT(r.fecha_captura, '%d/%m/%Y') as fecha_captura, 
                          DATE_FORMAT(r.fecha_estatus, '%d/%m/%Y') as fecha_estatus,
                          DATE_FORMAT(r.fecha_limite, '%d/%m/%Y') as fecha_limite,
-                         r.telefono_fijo, 
                          r.telefono_cel,
-                         r.numero_exterior, 
-                         r.numero_interior, 
-                         r.cp,
-                         r.referencias, 
-                         r.avance,
-                         r.concluido,
-                         r.id_estatus,
-                         e.estatus, 
-                         r.copaci,
-                         m.sectorint,
-                         r.notificacion_presidencia,
-                         r.activo
+                         r.referencias
                     FROM tbl_reporte  as r
-               LEFT JOIN cat_estatus as e on r.id_estatus = e.id_estatus
-               LEFT JOIN cat_origen as o on r.id_origen = o.id_origen
                LEFT JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
-               LEFT JOIN cat_aplicativo as a on r.id_aplicativo = a.id_aplicativo
                LEFT JOIN cat_calles as l on l.id_calle = r.id_calle
                          $joinCondition
                    WHERE 1 = 1 
-                   and r.id_estatus in (1, 2, 7)
+                     AND r.concluido = 0
+                     AND r.activo = 1
+                     AND r.id_aplicativo = 1
+                     AND r.id_estatus in (1, 2, 7)
                    $conditionst 
                    $condition
                    $condition_b
@@ -663,7 +643,7 @@ class cReports extends BD{
         //            $condition_b
         //            $condition_fecha
         //             ";
-            // die($query);
+            die($query);
 
         $result = $this->conn->prepare($query);
         $result->execute();
