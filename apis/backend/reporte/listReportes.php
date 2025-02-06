@@ -81,7 +81,7 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
 		$resp->rows		= $rows;
 		$resp->count	= $count;
 
-		return $response->withJson($resp,200);
+		return $response->withJson($rows,200);
 		
 	}catch(Exception $e){
 		$resp = new mensaje();

@@ -61,12 +61,12 @@ $app->post('/reporte/getReporteById',function(Request $request, Response $respon
 		$resp->rows		= $rows;
 		$resp->count	= $count;
 
-		return $response->withJson($resp,200);
+		return $response->withJson($rows,200);
 		
 	}catch(Exception $e){
 		$resp = new mensaje();
 		$resp->done		= false;
 		$resp->msg		= "error ".$e->getMessage();
-		return $response->withJson($resp,400);
+		return $response->withJson($rows,400);
 	}	      
 });

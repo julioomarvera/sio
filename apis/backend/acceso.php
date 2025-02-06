@@ -10,8 +10,8 @@ use \Firebase\JWT\JWT;
 
 $app->post('/acceso',function(Request $request, Response $response){
 
-	$txtUser = $request->getParam('user');
-	$txtPass = $request->getParam('password');
+	$txtUser = $request->getParam('usuario');
+	$txtPass = $request->getParam('clave');
 
 	$txtPass = md5($txtPass);
 	
@@ -48,7 +48,7 @@ $app->post('/acceso',function(Request $request, Response $response){
 		$selectUser = $cUsers->getUser($txtUser, $txtPass);
 		
 		if($selectUser->rowCount() == 0){
-			throw New Exception("Usuario no válido");
+			throw New Exception("Usuario no válidos U:$txtUser P:$txtPass");
 		}
 
 		$data   = $selectUser->fetch(PDO::FETCH_OBJ);

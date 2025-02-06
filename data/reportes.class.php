@@ -3784,7 +3784,7 @@ class cReports extends BD{
                        WHERE t.id_reporte = $id_rpt 
                     ORDER BY t.fecha_seguimiento DESC
                        LIMIT 1";
-                    // die($query);
+                   //  die($query);
 
             $result = $this->conn->prepare($query);
             $result->execute();

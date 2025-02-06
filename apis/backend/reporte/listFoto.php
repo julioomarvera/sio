@@ -1,23 +1,13 @@
 <?php
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST");
-header("Access-Control-Allow-Headers: Content-Type");
 
-// Carpeta donde se guardarán las imágenes
-
-// $dir_fc = "../";
-
-// include_once $dir_fc.'data/reportes.class.php';
-// require_once $dir_fc."common/function.class.php";	
 
 use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
 
 $app->post('/reporte/listFoto',function(Request $request, Response $response){
+
      $dir_fc = "../";
-//     var_dump($request);
-//     echo die($request);
     $uploadDir = $dir_fc."img/fotoTerritorialCopia/"; 
     // Verificar si se recibe una imagen
     if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_FILES["file"])) {
@@ -50,7 +40,7 @@ $app->post('/reporte/listFoto',function(Request $request, Response $response){
 
             return $response->withJson($resp,200);
         } else {
-            echo json_encode(["success" => false, "message" => "Error al subir la imagen"]);
+            echo json_encode(["success" => false, "message" => "Error al subir la imagen 2"]);
         }
     } else {
         echo json_encode(["success" => false, "message" => "No se recibió ninguna imagen"]);
