@@ -37,21 +37,72 @@ $app->post('/reporte/mapReportes',function(Request $request, Response $response)
         //     throw new Exception("No se recibió correctamente la información");
         // }
 
-        $direccion = $cFn->direccion_api(0, 0, 1);
-        var_dump($direccion);
 
-        // $reportes = $cAccion->getReports( $id_reporte );
+        $reportes = $cAccion->getReportsMap( $id_usuario );
 
         $done   = false;
-        $row    = "";
+        $maps   = [];
         $msg    = "noValido";
-        $count  = 0;
+
+        $array_colors = array("55" => "blue",
+                              "56" => "green",
+                              "57" => "yellow",
+                              "58" => "purple",
+                              "59" => "orange",
+                              "60" => "cyan",
+                              "61" => "pink",
+                              "62" => "black",
+                              "63" => "brown", 
+                              "64" => "gray",
+                              "65" => "goldenrod",
+                              "66" => "indigo",
+                              "67" => "navy",
+                              "68" => "saddlebrown",
+                              "69" => "slateblue",
+                              "70" => "yellowgreen",
+                              "71" => "wheat",
+                              "72" => "peru",
+                              "73" => "mediumslateblue",
+                              "74" => "indianred",
+                              "75" => "hotpink",
+                              "76" => "forestgreen",
+                              "77" => "dimgrey",
+                              "78" => "darkslategrey");
+
+
+        if($reportes->rowCount() > 0){
+            $row    = [];
+            while($rsRow = $reportes->fetch(PDO::FETCH_OBJ)){
+                $id_reporte        = $rsRow->id_reporte;      
+                $latitud_reporte   = $rsRow->latitud_reporte;              
+                $longitud_reporte  = $rsRow->longitud_reporte;              
+                $tramite           = $rsRow->tramite;      
+                $id_direccion_asig = $rsRow->id_direccion_asig;    
+
+                $row['id_reporte']       = $id_reporte;
+                $row['latitud_reporte']  = $latitud_reporte;
+                $row['longitud_reporte'] = $longitud_reporte;
+                $row['tramite']          = $tramite;              
+                
+                foreach ($array_colors as $key => $value) {
+                    if($key == $id_direccion_asig){
+                        $color = $value;
+                        $row['color'] = $color;
+                    }
+                }  
+
+                array_push($maps, $row); 
+            }
+
+            $done = true;	
+            $msg   = "Regsitro consultado correctamente";
+        }        
 
         $resp = new mensaje();
 
 		$resp->done 	= $done;
 		$resp->msg 		= $msg;
-		$resp->row		= $row;
+		$resp->row		= $maps;
 
 		return $response->withJson($resp,200);
 

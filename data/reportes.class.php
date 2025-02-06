@@ -3815,19 +3815,35 @@ class cReports extends BD{
     }
 
 
-    public function getReports( $id_usuario ){
+    public function getReportsMap( $id_usuario ){
         $condition = "";
+        // $array     = ();
         // if($id_usuario != ""){
         //     $condition = " AND id_u"
         // }
 
         try{
-            $query = "SELECT id_reporte,
-                             latitud_reporte,
-                             longitud_reporte
-                        FROM tbl_reporte
-                       WHERE id_estatus = 1 
-                         AND id_aplicativo = 1";
+            $query = "SELECT r.id_reporte,
+                             r.latitud_reporte,
+                             r.longitud_reporte,
+                            CASE
+                                WHEN d.id_remty IS NOT NULL THEN s.nombre
+                                WHEN d.id_peticion IS NOT NULL THEN p.nombre
+                                ELSE 'Otro'
+                             END AS tramite,
+                             d.id_direccion_asig
+                        FROM tbl_reporte as r
+                   LEFT JOIN tbl_reporte_dtl as d on r.id_reporte = d.id_reporte
+                   LEFT JOIN cat_remtys    as s on d.id_remty     = s.id_remtys AND s.activo = 1
+                   LEFT JOIN cat_peticiones as p on d.id_peticion = p.id_peticion AND p.activo = 1
+                       WHERE r.id_estatus = 1 
+                         AND r.id_aplicativo = 1";
+                    // die($query);
+
+            $result = $this->conn->prepare($query);
+            $result->execute();
+            return $result;
+
         }catch(\PDOException $e){
             return "Error: ".$e->getMessage();
         }
