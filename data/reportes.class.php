@@ -643,7 +643,7 @@ class cReports extends BD{
         //            $condition_b
         //            $condition_fecha
         //             ";
-            die($query);
+            // die($query);
 
         $result = $this->conn->prepare($query);
         $result->execute();
