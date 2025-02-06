@@ -66,6 +66,11 @@ foreach ($datos as $key => $value) {
 	elseif ($value == $api_complemento . "/apis/reporte/listFoto") {
 		require_once('backend/reporte/listFoto.php');
 	}
+	
+	//subir foto insert documentos
+	elseif ($value == $api_complemento . "/apis/reporte/insertFoto") {
+		require_once('backend/reporte/insertFoto.php');
+	}
 
 	
 
