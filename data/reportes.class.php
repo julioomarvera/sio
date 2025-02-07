@@ -3846,6 +3846,9 @@ class cReports extends BD{
                             observaciones,
                             llamada_reporte,
                             activo,
+                            atendido,
+                            latitud,
+                            longitud,
                             id_reporte
                             )
                              VALUES (
@@ -3859,6 +3862,9 @@ class cReports extends BD{
                             ?,
                             0,
                             1,
+                            ?,
+                            ?,
+                            ?,
                             ?)";
 
             $result = $this->conn->prepare($queryMP);
@@ -3889,7 +3895,10 @@ class cReports extends BD{
             $update = "UPDATE tbl_reporte_historia
                           SET id_usuario_modifica = ?,
                             fecha_modificacion = ?,
-                            observaciones = ?
+                            observaciones = ?,
+                            atendido = ?,
+                            latitud = ?,
+                            longitud = ?
                         WHERE id_reporte_historia = ?";
 
             $result = $this->conn->prepare($update);
