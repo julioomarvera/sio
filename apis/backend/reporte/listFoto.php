@@ -36,9 +36,9 @@ $app->post('/reporte/listFoto',function(Request $request, Response $response){
             //     "path" => $filePath
             // ]);
              $resp->path = $filePath;
-            // echo json_encode([$filePath]); 
+           // ec ho json_encode([$filePath]); 
 
-            return $response->withJson($resp,200);
+            return $response->withJson($filePath,200);
         } else {
             echo json_encode(["success" => false, "message" => "Error al subir la imagen 2"]);
         }

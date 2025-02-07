@@ -31,14 +31,6 @@ $app->post('/reporte/insertFoto',function(Request $request, Response $response){
 		$msg     = "";
 		$insertDocumentoDB  = 0;
 
-		$token 	 = $cFn->getToken( $headers );
-
-		if($token == ""){
-			throw new Exception("No token available");
-		}
-        
-        JWT::decode($token, _SECRET_JWT_, array('HS256')); //valida jwt, si no es válido tira una exepción
-
         if($id_reporte == "" || !is_numeric($id_reporte)){
             throw new Exception("Se requiere del número de reporte");
         }
