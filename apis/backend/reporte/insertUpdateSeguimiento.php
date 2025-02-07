@@ -8,7 +8,6 @@ use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
 
 $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Response $response){
-
 	$id_update			= $request->getParam('id_seguimiento') ?? 0;
 
     $id_reporte = $request->getParam('id_reporte');
@@ -22,7 +21,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
     $seguimiento = 1;
     $observaciones = $request->getParam('observaciones') ?? '';
 
-    $uploadedFiles = $request->getUploadedFiles();
+    $uploadedFiles = $request->getParam('imageRuta');
 
     $atendido = ($atendido == "") ? 0 : 1;
 
@@ -90,40 +89,46 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
             throw new Exception("Ocurrió un inconveniente ".$id_reg);
         }
 
-        $pathLocal = "img/fotoseguimiento/";
-        $uploadDir = "../$pathLocal"; 
+        $pathLocal    = "img/fotoseguimiento/";
+        $pathLocalAnt = "img/fotoTerritorialCopia/";
+        //$uploadDir = "../$pathLocal"; 
+//
+        //$uploadedFile = $uploadedFiles['foto'];
+//
+        //if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
+        //    $permitidos = array("image/jpg", "image/jpeg", "image/png");
+        //    
+        //    if(in_array($uploadedFile->getClientMediaType(), $permitidos)){
+        //        $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
+    //
+        //        $basename = bin2hex(random_bytes(8));
+        //        $filename = sprintf('%s.%0.8s', $basename, $extension);
 
-        $uploadedFile = $uploadedFiles['foto'];
+        $partes = explode(".", $uploadedFiles);
+        $extension = end($partes);
 
-        if ($uploadedFile->getError() === UPLOAD_ERR_OK) {
-            $permitidos = array("image/jpg", "image/jpeg", "image/png");
-            
-            if(in_array($uploadedFile->getClientMediaType(), $permitidos)){
-                $extension = pathinfo($uploadedFile->getClientFilename(), PATHINFO_EXTENSION);
-    
-                $basename = bin2hex(random_bytes(8));
-                $filename = sprintf('%s.%0.8s', $basename, $extension);
+        $dataInsertDocto = array(
+            $id_reporte,
+            $id_reg,
+            $id_usuario_captura,
+            $uploadedFiles,
+            $extension,
+            $pathLocal,
+        );
 
-                $dataInsertDocto = array(
-                    $id_reporte,
-                    $id_reg,
-                    $id_usuario_captura,
-                    $filename,
-                    $extension,
-                    $pathLocal,
-                );
-        
-                $insertDocumentoDB = $cAccion->insertDocumento($dataInsertDocto);
-    
-                if(is_numeric($insertDocumentoDB)){
-                    $uploadedFile->moveTo($uploadDir . DIRECTORY_SEPARATOR . $filename);
-                }else{
-                    $msg = "Ocurrió un inconveniente ".$insertDocumentoDB;
-                }
 
-            }else{
-                $msg = " | La imagen no tiene un formato válido |";
+        $insertDocumentoDB = $cAccion->insertDocumento($dataInsertDocto);
+        if(is_numeric($insertDocumentoDB)){
+            $new_route = "../".$pathLocal.md5($insertDocumentoDB).".".$extension;
+            $route_ant = "../".$pathLocalAnt.$uploadedFiles;
+            //$uploadedFile->moveTo($uploadDir . DIRECTORY_SEPARATOR . $filename);
+            if(file_exists($route_ant)){
+                copy($route_ant, $new_route);
+            } else {
+                $msg = "No existe el archivo";
             }
+        }else{
+            $msg = "Ocurrió un inconveniente ".$insertDocumentoDB;
         }
 
         $done = true;
@@ -131,16 +136,14 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
 
 		$resp = new mensaje();
 		$resp->done = $done;
-		$resp->msg  = $msg;
-		$resp->id_historia_reporte = $id_reg;
 
-		return $response->withJson($resp,200);
+		return $response->withJson($done,200);
 
 
 	}catch(Exception $e){
 		$resp = new mensaje();
 		$resp->done = false;
 		$resp->msg 	 = "Error: ". $e->getMessage();
-		return $response->withJson($resp,400);
+		return $response->withJson($done,400);
 	}	   	   
 });
