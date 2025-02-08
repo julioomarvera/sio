@@ -11,10 +11,10 @@ use \Firebase\JWT\JWT;
 $app->post('/reporte/listReportes',function(Request $request, Response $response){
 
     $id_current_user = $request->getParam('id_current_user');
-	$id_rol  = $request->getParam('id_rol');
-	$id_sector  = $request->getParam('id_sector');
-	$id_zona  = $request->getParam('id_zona');
-	$id_seccion  = $request->getParam('id_seccion');
+	$id_rol 		 = $request->getParam('id_rol');
+	$id_sector  	 = $request->getParam('id_sector');
+	$id_zona  		 = $request->getParam('id_zona');
+	$id_seccion      = $request->getParam('id_seccion');
 
 	$cFn 	 = new cFunction();
 	$cAccion = new cReports();
@@ -63,12 +63,18 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
 		$rows	   = array();
 		$msg   	   = "noValido";
 		$count 	   = 0;
-
-		$count = $lista->rowCount();
-
+		
+		$count = $lista->rowCount();		
 		if($count > 0){
-			while ($rsRow = $lista->fetch(PDO::FETCH_ASSOC)){		
-				$rows[] = $rsRow;
+			while ($rsRow = $lista->fetch(PDO::FETCH_OBJ)){	
+
+				$get_atentido = $cAccion->getAtendidoByHistory( $rsRow->id_reporte );
+				if($get_atentido == ""){
+					$rows[] = $rsRow;
+
+				}		
+				
+				// var_dump($data);
 			}
 			$done = true;	
 			$msg   = "Lista consultada correctamente";
