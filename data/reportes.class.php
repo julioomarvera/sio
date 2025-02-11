@@ -3820,6 +3820,7 @@ class cReports extends BD{
                             atendido,
                             latitud,
                             longitud,
+                            datosCompletos,
                             id_reporte
                             )
                              VALUES (
@@ -3833,6 +3834,7 @@ class cReports extends BD{
                             ?,
                             0,
                             1,
+                            ?,
                             ?,
                             ?,
                             ?,
@@ -3869,7 +3871,8 @@ class cReports extends BD{
                             observaciones = ?,
                             atendido = ?,
                             latitud = ?,
-                            longitud = ?
+                            longitud = ?,
+                            datosCompletos = ?
                         WHERE id_reporte_historia = ?";
 
             $result = $this->conn->prepare($update);

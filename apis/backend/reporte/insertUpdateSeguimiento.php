@@ -13,6 +13,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
     $id_reporte = $request->getParam('id_reporte');
     $id_usuario_captura = $request->getParam('id_usuario');
     $atendido = $request->getParam('atendido');
+    $datosCompletos  = $request->getParam('datosCompletos');
 
     $latitud = $request->getParam('latitud');
     $longitud = $request->getParam('longitud');
@@ -24,6 +25,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
     $uploadedFiles = $request->getParam('imageRuta');
 
     $atendido = ($atendido == "") ? 0 : 1;
+    $datosCompletos = ($datosCompletos  == "") ? 0 : 1;
 
 	$cFn 	 = new cFunction();
 	$cAccion = new cReports();
@@ -70,6 +72,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
             $atendido,
             $latitud,
             $longitud,
+            $datosCompletos,
             $id_reporte
         );
 
