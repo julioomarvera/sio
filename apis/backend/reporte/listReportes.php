@@ -67,14 +67,7 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
 		$count = $lista->rowCount();		
 		if($count > 0){
 			while ($rsRow = $lista->fetch(PDO::FETCH_OBJ)){	
-
-				$get_atentido = $cAccion->getAtendidoByHistory( $rsRow->id_reporte );
-				if($get_atentido == ""){
-					$rows[] = $rsRow;
-
-				}		
-				
-				// var_dump($data);
+				$rows[] = $rsRow;
 			}
 			$done = true;	
 			$msg   = "Lista consultada correctamente";

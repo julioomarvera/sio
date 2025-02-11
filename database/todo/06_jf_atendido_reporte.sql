@@ -1,0 +1,1 @@
+ALTER TABLE tbl_reporte ADD atendido TINYINT DEFAULT 0 NOT NULL;

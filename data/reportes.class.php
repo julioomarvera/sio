@@ -585,6 +585,7 @@ class cReports extends BD{
                      AND r.concluido = 0
                      AND r.activo = 1
                      AND r.id_aplicativo = 1
+                     AND r.atendido = 0
                      AND r.id_estatus in (1, 2, 7)
                    $conditionst 
                    $condition
@@ -3878,6 +3879,27 @@ class cReports extends BD{
             $result = $this->conn->prepare($update);
             $exec->beginTransaction();
             $result->execute($data);
+            $exec->commit();
+
+        }catch(\PDOException $e){
+            $exec->rollBack();
+            $correcto = "Error! : ".$e->getMessage();
+        }
+        return $correcto;
+    }
+
+    public function updateAtendidoByReporteMaster( $id_reporte ){
+        $correcto = 1;
+        $exec       = $this->conn->conexion();
+
+        try{
+            $update = "UPDATE tbl_reporte
+                          SET atendido = 1
+                        WHERE id_reporte = ?";
+
+            $result = $this->conn->prepare($update);
+            $exec->beginTransaction();
+            $result->execute(array($id_reporte));
             $exec->commit();
 
         }catch(\PDOException $e){

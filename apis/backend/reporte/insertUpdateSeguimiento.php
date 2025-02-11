@@ -24,7 +24,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
 
     $uploadedFiles = $request->getParam('imageRuta');
 
-    $atendido = ($atendido == "") ? 0 : 1;
+    $atendido = ($atendido == "") ? 0 : $atendido;
     $datosCompletos = ($datosCompletos  == "") ? 0 : 1;
 
 	$cFn 	 = new cFunction();
@@ -60,6 +60,10 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
         if($latitud == "" || $longitud == ""){
             throw new Exception("Debes de especificar la latitud y longitud");
         }
+        
+        if(!is_numeric($atendido)){
+            throw new Exception("Debes de especificar si está atendido o no");
+        }
 
 		JWT::decode($token, _SECRET_JWT_, array('HS256')); //valida jwt, si no es válido tira una exepción
 
@@ -92,6 +96,10 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
             throw new Exception("Ocurrió un inconveniente ".$id_reg);
         }
 
+        if($atendido == 1){
+            $cAccion->updateAtendidoByReporteMaster($id_reporte);
+        }
+
         $pathLocal    = "img/fotoseguimiento/";
         $pathLocalAnt = "img/fotoTerritorialCopia/";
         //$uploadDir = "../$pathLocal"; 
@@ -122,11 +130,19 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
 
         $insertDocumentoDB = $cAccion->insertDocumento($dataInsertDocto);
         if(is_numeric($insertDocumentoDB)){
-            $new_route = "../".$pathLocal.md5($insertDocumentoDB).".".$extension;
+
+            $pathLocalName = md5($insertDocumentoDB).".".$extension;
+
+            $new_route = "../".$pathLocal.$pathLocalName;
             $route_ant = "../".$pathLocalAnt.$uploadedFiles;
+
+            $sio_dir = "../../atencionc/files/reporte/historia";
+
+            $rutaCopyToSio = $sio_dir."/".$pathLocalName;
             //$uploadedFile->moveTo($uploadDir . DIRECTORY_SEPARATOR . $filename);
             if(file_exists($route_ant)){
                 copy($route_ant, $new_route);
+                copy($new_route, $rutaCopyToSio);
             } else {
                 $msg = "No existe el archivo";
             }
