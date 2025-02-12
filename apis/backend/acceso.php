@@ -63,14 +63,6 @@ $app->post('/acceso',function(Request $request, Response $response){
 		$id_seccion	= intval($data->id_seccion);
 
 		$arrComunidadesUser = array();
-		$perfilesConsulta = array(1,8,9,10);
-
-		if(in_array($id_rol, $perfilesConsulta)){
-			$rsComunidades = $cUsers->getColoniasByProfile($id_rol, $id_zona, $id_sector, $id_seccion);
-			while($rowComunidad = $rsComunidades->fetch(PDO::FETCH_OBJ)){
-				$arrComunidadesUser[] = $rowComunidad;
-			}
-		}
 
 		$issuedat_claim = time(); // issued at
 		$expire_claim = $issuedat_claim + 37000; // expire time in seconds

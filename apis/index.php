@@ -71,8 +71,11 @@ foreach ($datos as $key => $value) {
 	elseif ($value == $api_complemento . "/apis/reporte/insertFoto") {
 		require_once('backend/reporte/insertFoto.php');
 	}
-
 	
+	//Listar colonias dependiendo del usuario y sector
+	elseif ($value == $api_complemento . "/apis/reporte/listColonias") {
+		require_once('backend/reporte/listColonias.php');
+	}
 
 }
 
