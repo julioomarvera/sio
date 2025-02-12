@@ -27,9 +27,9 @@ $app->post('/reporte/listColonias',function(Request $request, Response $response
 	try{
 
 		$done 	   = false;
-		$colonias  = array();
+		$arrComunidadesUser  = array();
 		$msg   	   = "noValido";
-		$count 	   = 0;
+		$countComunidades = 0;
 
 		$token 	 = $cFn->getToken( $headers );
 	
@@ -60,6 +60,8 @@ $app->post('/reporte/listColonias',function(Request $request, Response $response
 
 		$rsComunidades = $cAccion->getColoniasByProfile($id_rol, $id_zona, $id_sector, $id_seccion);
 
+		$countComunidades = $rsComunidades->rowCount();
+
 		while($rowComunidad = $rsComunidades->fetch(PDO::FETCH_OBJ)){
 			$arrComunidadesUser[] = $rowComunidad;
 		}
@@ -72,7 +74,7 @@ $app->post('/reporte/listColonias',function(Request $request, Response $response
 		$resp->done 	= $done;
 		$resp->msg 		= $msg;
 		$resp->colonias	= $arrComunidadesUser;
-		$resp->count	= $count;
+		$resp->count	= $countComunidades;
 
 		return $response->withJson($resp,200);
 		
