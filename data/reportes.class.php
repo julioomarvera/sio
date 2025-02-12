@@ -441,7 +441,7 @@ class cReports extends BD{
 
 
 
-    public function getAllReg( $id_usuario, $rol, $id_sector, $id_zona, $id_seccion ){
+    public function getAllReg( $id_usuario, $rol, $id_sector, $id_zona, $id_seccion, $id_comunidad ){
 
         $condition      = "";
         $joinCondition  = "";
@@ -568,7 +568,12 @@ class cReports extends BD{
             }
         }
 
+        if(is_numeric($id_comunidad) && $id_comunidad > 0){
+            $condition.= " and r.id_colonia = $id_comunidad";
+        }
+
         $query = "SELECT r.id_reporte, 
+                         r.id_colonia,
                          m.colonia,
                          l.calle,
                          r.descripcion, 

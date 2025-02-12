@@ -62,8 +62,14 @@ $app->post('/acceso',function(Request $request, Response $response){
 		$id_zona	= intval($data->id_zona);
 		$id_seccion	= intval($data->id_seccion);
 
-		if($id_sector == 0){
+		$arrComunidadesUser = array();
+		$perfilesConsulta = array(1,8,9,10);
 
+		if(in_array($id_rol, $perfilesConsulta)){
+			$rsComunidades = $cUsers->getColoniasByProfile($id_rol, $id_zona, $id_sector, $id_seccion);
+			while($rowComunidad = $rsComunidades->fetch(PDO::FETCH_OBJ)){
+				$arrComunidadesUser[] = $rowComunidad;
+			}
 		}
 
 		$issuedat_claim = time(); // issued at
@@ -100,6 +106,7 @@ $app->post('/acceso',function(Request $request, Response $response){
 		$resp->uid    	  = $uid;
 		$resp->token      = $token;
 		$resp->img_route  = $img_route;
+		$resp->colonias  = $arrComunidadesUser;
 
 		$resp->systemOptions = $systemOptions;
 		

@@ -10,3 +10,5 @@ define('id_usr','cve_admin_'.$proydes);                 //Sesión principal del 
 define('_SECRET_JWT_', '-Jess-SK-@-tinuy-ON-S3erv!SIO');
 define('_issuer_claim_', 'localhost');
 define('_audience_claim_', 'audience');
+
+define('_NAME_MAIN_FOLDER_', 'qasio');

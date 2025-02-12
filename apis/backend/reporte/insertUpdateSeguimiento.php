@@ -136,7 +136,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
             $new_route = "../".$pathLocal.$pathLocalName;
             $route_ant = "../".$pathLocalAnt.$uploadedFiles;
 
-            $sio_dir = "../../atencionc/files/reporte/historia"; //este despues se agrega a variable de entorno
+            $sio_dir = "../../"._NAME_MAIN_FOLDER_."/files/reporte/historia"; //este despues se agrega a variable de entorno
 
             $rutaCopyToSio = $sio_dir."/".$pathLocalName;
             //$uploadedFile->moveTo($uploadDir . DIRECTORY_SEPARATOR . $filename);

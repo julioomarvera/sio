@@ -15,6 +15,7 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
 	$id_sector  	 = $request->getParam('id_sector');
 	$id_zona  		 = $request->getParam('id_zona');
 	$id_seccion      = $request->getParam('id_seccion');
+	$id_comunidad    = $request->getParam('id_comunidad_filtro') ?? 0;
 
 	$cFn 	 = new cFunction();
 	$cAccion = new cReports();
@@ -56,7 +57,8 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
             $id_rol,
             $id_sector,
             $id_zona,
-            $id_seccion
+            $id_seccion,
+			$id_comunidad
         );
 		
 		$done 	   = false;

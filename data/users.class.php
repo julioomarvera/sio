@@ -723,6 +723,45 @@ class cUsers extends BD
         return $result;       
     }
     
+    public function getColoniasByProfile( $id_rol, $id_zona, $id_sector, $id_seccion) {
+        $condition = " 1 = 1 ";
+
+        if($id_rol == 8){
+            $condition = " tat.id_sector = $id_sector";
+        }
+        if($id_rol == 9){
+            $condition = " tat.id_zona = $id_zona";
+        }
+        if($id_rol == 10){
+            $condition = " tat.id_seccion = $id_seccion";
+        }
+
+        $query = "SELECT
+                    com.id_comunidad,
+                    com.colonia,
+                    cta.tipo_asentamiento,
+                    cta.abreviatura as ab_asentamiento
+                    from
+                        cat_comunidad as com
+                    left join cat_tipo_asentamiento cta on
+                        cta.id_tipo_asentamiento = com.id_tipo_asentamiento
+                    where
+                        com.id_comunidad in (
+                        select
+                            tat.id_comunidad
+                        from
+                            tbl_asig_territorial as tat
+                        where
+                            $condition
+                        )
+                        and com.activo = 1";
+
+                  
+        $result = $this->conn->prepare($query);
+        $result->execute();
+        return $result;       
+    }
+    
     public function getUserById( $id ) {
         $condition = "";
 
