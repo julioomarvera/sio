@@ -3893,13 +3893,13 @@ class cReports extends BD{
         return $correcto;
     }
 
-    public function updateAtendidoByReporteMaster( $id_reporte ){
+    public function updateAtendidoByReporteMaster( $id_reporte, $atendido ){
         $correcto = 1;
         $exec       = $this->conn->conexion();
 
         try{
             $update = "UPDATE tbl_reporte
-                          SET atendido = 1
+                          SET atendido = $atendido
                         WHERE id_reporte = ?";
 
             $result = $this->conn->prepare($update);

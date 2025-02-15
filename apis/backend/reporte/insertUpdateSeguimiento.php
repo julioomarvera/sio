@@ -28,6 +28,16 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
     $atendido = ($atendido == "") ? 0 : $atendido;
     $datosCompletos = ($datosCompletos  == "") ? 0 : 1;
     
+    if($atendido == 1){
+        $datosCompletos = 1;
+    }
+
+    if($atendido == 0 ){
+        $atendido = 2;
+    }
+
+    //1 Atendido, 2 No atendido ( el 3 correspondería datos completos)
+
 	$cFn 	 = new cFunction();
 	$cAccion = new cReports();
 
@@ -97,9 +107,7 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
             throw new Exception("Ocurrió un inconveniente ".$id_reg);
         }
 
-        if($atendido == 1){
-            $cAccion->updateAtendidoByReporteMaster($id_reporte);
-        }
+        $cAccion->updateAtendidoByReporteMaster($id_reporte, $atendido);
 
         $pathLocal    = "img/fotoseguimiento/";
         $pathLocalAnt = "img/fotoTerritorialCopia/";
