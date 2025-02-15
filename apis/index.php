@@ -46,6 +46,9 @@ foreach ($datos as $key => $value) {
 	elseif ($value == $api_complemento . "/apis/reporte/listReportes") {
 		require_once('backend/reporte/listReportes.php');
 	}
+	elseif ($value == $api_complemento . "/apis/reporte/listGeoLocalizacion") {
+		require_once('backend/reporte/listGeoLocalizacion.php');
+	}
 	elseif ($value == $api_complemento . "/apis/reporte/insertupdate") {
 		require_once('backend/reporte/insertupdate.php');
 	}

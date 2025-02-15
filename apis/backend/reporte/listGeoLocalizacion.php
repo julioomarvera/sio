@@ -8,7 +8,7 @@ use \Psr\Http\Message\ServerRequestInterface as Request;
 use \Psr\Http\Message\ResponseInterface as Response;
 use \Firebase\JWT\JWT;
 
-$app->post('/reporte/listReportes',function(Request $request, Response $response){
+$app->post('/reporte/listGeoLocalizacion',function(Request $request, Response $response){
 
     $id_current_user = $request->getParam('id_current_user');
 	$id_rol 		 = $request->getParam('id_rol');
@@ -52,7 +52,7 @@ $app->post('/reporte/listReportes',function(Request $request, Response $response
         //     throw new Exception("No se especificó correctamente el sector, zona o sección");
         // }
 
-		$lista = $cAccion->getAllReg(
+		$lista = $cAccion->getAllRegGeoreferencia(
             $id_current_user,
             $id_rol,
             $id_sector,

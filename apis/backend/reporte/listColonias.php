@@ -76,7 +76,7 @@ $app->post('/reporte/listColonias',function(Request $request, Response $response
 		$resp->colonias	= $arrComunidadesUser;
 		$resp->count	= $countComunidades;
 
-		return $response->withJson($resp,200);
+		return $response->withJson($arrComunidadesUser,200);
 		
 	}catch(Exception $e){
 		$resp = new mensaje();

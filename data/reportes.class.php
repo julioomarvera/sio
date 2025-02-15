@@ -596,7 +596,7 @@ class cReports extends BD{
                    $condition
                    $condition_b
                    $condition_fecha";
-                // die($query);
+               // die($query);
 
         $result = $this->conn->prepare($query);
         $result->execute();
@@ -3920,7 +3920,163 @@ class cReports extends BD{
         $this->conn = null;
     }
 
+// prueba de julio 
 
+public function getAllRegGeoreferencia( $id_usuario, $rol, $id_sector, $id_zona, $id_seccion, $id_comunidad ){
+
+    $condition      = "";
+    $joinCondition  = "";
+    $str            = "";
+    $conditionst    = "";
+    $condition_b    = "";
+    $join_cdt       = "";
+
+    if($rol > 1){
+        $condition .= " AND r.activo = 1";
+    }
+
+    if($rol == 7){
+        $condition .= " AND r.id_reporte IN (SELECT dtl.id_reporte
+                                               FROM tbl_reporte_dtl as dtl
+                                          LEFT JOIN cat_remtys as m on m.id_remtys = dtl.id_remty
+                                              WHERE m.es_tramite = 0)";
+    }
+    
+    if($rol == 8){
+        $condition .= " AND r.id_sector = $id_sector";
+    }
+    if($rol == 9){
+        $condition .= " AND r.id_zona = $id_zona";
+    }
+    if($rol == 10){
+        $condition .= " AND r.id_seccion = $id_seccion";
+    }
+
+    $condition_fecha = "ORDER BY r.id_reporte DESC";
+    
+    if($this->getFiltro() !=""){
+
+        $array_f = $this->getArraySearch();
+
+        if(isset($array_f["id_reporte"]) && $array_f["id_reporte"] != ""){
+            $condition_b .= " AND r.id_reporte = ".$array_f["id_reporte"];
+        }
+
+        if(isset($array_f["fecha_inicial"]) && $array_f["fecha_inicial"] != "" && 
+           $array_f["fecha_final"] != ""    && isset($array_f["fecha_final"]) ){
+            $condition_b .= " AND CAST(r.fecha_captura AS DATE) BETWEEN '".$array_f["fecha_inicial"]."' AND '".$array_f["fecha_final"]."' ";
+        }
+
+        if(isset($array_f["tipo_reporte"]) && $array_f["tipo_reporte"] != ""){
+            $condition_b .= " AND r.id_origen = '".$array_f["tipo_reporte"]."' ";
+        }
+
+        if(isset($array_f["tipo_tramite"]) && $array_f["tipo_tramite"] != ""){
+            $condition_b .= "AND r.id_reporte IN 
+                            ( SELECT d.id_reporte 
+                                FROM tbl_reporte_dtl as d 
+                               WHERE d.id_remty = ".$array_f["tipo_tramite"]." 
+                                 AND d.estatus_rechazado = 0 )";
+        }
+
+        if(isset($array_f["colonia_b"]) && $array_f["colonia_b"] != ""){
+            $condition_b .= " AND r.id_colonia = ".$array_f["colonia_b"]." ";
+        }
+
+        if(isset($array_f["calle_b"]) && $array_f["calle_b"] != ""){
+            $condition_b .= " AND r.id_calle = ".$array_f["calle_b"]." ";
+        }
+
+        if(isset($array_f["dir_b"]) && $array_f["dir_b"] != ""){
+            $conditionst = ""; //La condición se elimina para que no vaya a master
+            $condition_b .= "AND r.id_reporte IN 
+                            ( SELECT d.id_reporte 
+                                FROM tbl_reporte_dtl as d 
+                               WHERE d.id_direccion_asig = ".$array_f["dir_b"]." 
+                                 AND d.estatus_rechazado = 0
+                                 AND d.eliminado = 0
+                                 AND d.id_estatus in ($str))";
+        }
+
+        if(isset($array_f["ciudadano_s"]) && $array_f["ciudadano_s"] != ""){
+            $joinCondition .= " LEFT JOIN cat_ciudadano as c on r.id_cuidadano_solicita = c.id_ciudadano  ";
+            $condition_b .= " AND CONCAT_WS(' ', TRIM(c.nombre), TRIM(c.apepat), TRIM(c.apemat) ) LIKE '%".trim($array_f["ciudadano_s"])."%' ";
+        }
+
+        if(isset($array_f["detalle_b"]) && $array_f["detalle_b"] != ""){
+            $condition_b .= " AND r.descripcion LIKE '%".$array_f["detalle_b"]."%' ";
+        }
+
+        if(isset($array_f["bus_notas"]) && $array_f["bus_notas"] == 1){
+            $condition_b .= " OR r.id_reporte IN( SELECT h.id_reporte 
+                                                   FROM tbl_reporte_historia as h
+                                                  WHERE h.observaciones LIKE '%".$array_f["detalle_b"]."%') ";
+        }
+
+        if(isset($array_f["folio_opdm_b"]) && $array_f["folio_opdm_b"] != ""){
+            $condition_b .= " AND r.id_reporte IN (SELECT c.id_reporte
+                                                   FROM tbl_reporte_complemento as c
+                                                  WHERE CONCAT_WS('/', c.folio, c.anio) LIKE '%".$array_f["folio_opdm_b"]."%')";
+        }
+
+        if(isset($array_f["no_of_ext_b"]) && $array_f["no_of_ext_b"] != ""){
+            $condition_b .= " AND r.id_reporte IN (SELECT c.id_reporte
+                                                   FROM tbl_reporte_complemento as c
+                                                  WHERE c.folio_externo LIKE '%".$array_f["no_of_ext_b"]."%')";
+        }
+
+        if(isset($array_f["nom_car_pro_b"]) && $array_f["nom_car_pro_b"] != ""){
+            $condition_b .= " AND r.id_reporte IN (SELECT c.id_reporte
+                                                   FROM tbl_reporte_complemento as c
+                                                  WHERE (CONCAT_WS(' ', TRIM(c.nombre), TRIM(c.cargo), TRIM(c.procedencia)) LIKE '%".trim($array_f["nom_car_pro_b"])."%'
+                                                   OR c.nombre LIKE '%".trim($array_f["nom_car_pro_b"])."%'
+                                                   OR c.cargo  LIKE '%".trim($array_f["nom_car_pro_b"])."%'
+                                                   OR c.procedencia LIKE '%".trim($array_f["nom_car_pro_b"])."%'))";
+        }
+
+        if(isset($array_f["observaciones_extra_b"]) && $array_f["observaciones_extra_b"] != ""){
+            $condition_b .= " AND r.id_reporte IN (SELECT c.id_reporte
+                                                   FROM tbl_reporte_complemento as c
+                                                  WHERE c.observaciones_extra LIKE '%".$array_f["folio_opdm_b"]."%')";
+        }
+
+        if(isset($array_f["peticion_b"]) && $array_f["peticion_b"] != ""){
+            $condition_b .= "AND r.id_reporte IN 
+                            ( SELECT d.id_reporte 
+                                FROM tbl_reporte_dtl as d
+                               WHERE d.id_peticion = ".$array_f["peticion_b"]." 
+                                 AND d.estatus_rechazado = 0 )";
+        }
+    }
+
+    if(is_numeric($id_comunidad) && $id_comunidad > 0){
+        $condition.= " and r.id_colonia = $id_comunidad";
+    }
+
+    $query = "SELECT r.id_reporte, 
+                     r.descripcion, 
+                     r.latitud_reporte,
+                     r.longitud_reporte  
+                FROM tbl_reporte  as r
+           LEFT JOIN cat_comunidad as m on r.id_colonia = m.id_comunidad
+           LEFT JOIN cat_calles as l on l.id_calle = r.id_calle
+                     $joinCondition
+               WHERE 1 = 1 
+                 AND r.concluido = 0
+                 AND r.activo = 1
+                 AND r.id_aplicativo = 1
+                 AND r.atendido = 0
+                 AND r.id_estatus in (1, 2, 7)
+               $conditionst 
+               $condition
+               $condition_b
+               $condition_fecha";
+           // die($query);
+
+    $result = $this->conn->prepare($query);
+    $result->execute();
+    return $result;
+} 
 
 }
 

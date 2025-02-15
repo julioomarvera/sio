@@ -24,9 +24,10 @@ $app->post('/reporte/insertupdateSeguimiento',function(Request $request, Respons
 
     $uploadedFiles = $request->getParam('imageRuta');
 
+    
     $atendido = ($atendido == "") ? 0 : $atendido;
     $datosCompletos = ($datosCompletos  == "") ? 0 : 1;
-
+    
 	$cFn 	 = new cFunction();
 	$cAccion = new cReports();
 
