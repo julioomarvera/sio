@@ -754,7 +754,7 @@ class cUsers extends BD
                         where
                             $condition
                         )
-                        and com.activo = 1";
+                        and com.activo = 1 ORDER by com.colonia asc";
 
                   
         $result = $this->conn->prepare($query);
