@@ -595,7 +595,8 @@ class cReports extends BD{
                    $conditionst 
                    $condition
                    $condition_b
-                   $condition_fecha";
+                   $condition_fecha
+                   ORDER BY m.colonia asc";
                // die($query);
 
         $result = $this->conn->prepare($query);
