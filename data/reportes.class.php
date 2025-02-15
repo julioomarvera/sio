@@ -596,7 +596,6 @@ class cReports extends BD{
                    $condition
                    $condition_b
                    ORDER BY m.colonia asc";
-                die($query);
 
         $result = $this->conn->prepare($query);
         $result->execute();
